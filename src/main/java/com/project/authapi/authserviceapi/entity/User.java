@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 
-// klasa reprezentująca użytkownika
+// User representing class
 public class User implements UserDetails {
 
     @Id

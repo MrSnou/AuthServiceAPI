@@ -1,8 +1,13 @@
 package com.project.authapi.authserviceapi.controller;
 
-// REST API
+import jakarta.websocket.server.ServerEndpoint;
 
+// REST API
+// endpoints: /login, /register, /refresh itd.
+@ServerEndpoint("/api/auth/register")
 public class AuthController {
 
-    // endpointy: /login, /register, /refresh itd.
+    
+
+
 }
