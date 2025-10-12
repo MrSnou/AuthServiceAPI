@@ -1,5 +1,11 @@
 package com.project.authapi.authserviceapi.dto;
 
+import lombok.Data;
+
+@Data
 public class RegisterRequest {
-    // pola: email, password, username
+    private String username;
+    private String password;
+    private String email;
+
 }
