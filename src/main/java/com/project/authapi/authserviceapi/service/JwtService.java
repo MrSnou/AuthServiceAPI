@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.Map;
 
 @Service
-public class JwtService {
+public class JwtService implements AutoCloseable {
 
     @Value("${jwt.secret}")
     private String secret;
@@ -75,4 +75,8 @@ public class JwtService {
                 .getBody();
     }
 
+    @Override
+    public void close() throws Exception {
+
+    }
 }

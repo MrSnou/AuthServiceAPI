@@ -38,7 +38,7 @@ public class AuthService {
         String username = userDetails.getUsername();
         String password = userDetails.getPassword();
 
-        if (userRepository.findByUsername(username).isPresent()) {
+        if (userRepository.findByUsername(username).isPresent() || userRepository.existsByUsername(username)) {
             if (!passwordEncoder.matches(loginRequest.getPassword(),  password)) {
                 throw new IllegalArgumentException("Password is incorrect");
             } else {

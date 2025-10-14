@@ -5,10 +5,8 @@ import com.project.authapi.authserviceapi.dto.RegisterRequest;
 import com.project.authapi.authserviceapi.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -30,6 +28,12 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         String token = authService.login(loginRequest);
         return ResponseEntity.ok("User " + loginRequest.getUsername() + " succesfully logged in!\n" + Map.of("token", token));
+    }
+
+    @GetMapping("/secure")
+    public ResponseEntity<String> secureEndpoint(Authentication authentication) {
+        String username = authentication.getName();
+        return ResponseEntity.ok("Zalogowano jako: " + username);
     }
 
 }
