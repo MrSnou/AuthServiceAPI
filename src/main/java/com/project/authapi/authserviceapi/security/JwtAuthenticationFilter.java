@@ -5,6 +5,7 @@ import com.project.authapi.authserviceapi.service.CustomUserDetailsService;
 import com.project.authapi.authserviceapi.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,24 +39,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         } else {
             try  {
-                String authHeader = request.getHeader("Authorization");
-                if (authHeader == null && !authHeader.startsWith("Bearer ")) {
-                    filterChain.doFilter(request, response);
-                    return;
+                String token = null;
+                if (request.getCookies() != null) {
+                    for (Cookie cookie : request.getCookies()) {
+                        if ("jwt".equals(cookie.getName())) {
+                            token = cookie.getValue();
+                            break;
+                        }
+                    }
+                }
+                if (token == null) {
+                    String authHeader = request.getHeader("Authorization");
+                    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                        token = authHeader.substring(7);
+                    }
                 }
 
-                String token = authHeader.substring(7);
-                String username = jwtServ.extractUsername(token);
+                if (token != null) {
+                    String username = jwtServ.extractUsername(token);
 
+                    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                        UserDetails currentUD = userDS.loadUserByUsername(username);
 
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails currentUD = userDS.loadUserByUsername(username);
-
-                    if (jwtServ.isTokenValid(token, currentUD)) {
-                        UsernamePasswordAuthenticationToken authToken =
-                                new UsernamePasswordAuthenticationToken(currentUD, null, currentUD.getAuthorities());
-                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                        if (jwtServ.isTokenValid(token, currentUD)) {
+                            UsernamePasswordAuthenticationToken authToken =
+                                    new UsernamePasswordAuthenticationToken(currentUD, null, currentUD.getAuthorities());
+                            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            SecurityContextHolder.getContext().setAuthentication(authToken);
+                        }
                     }
                 }
 
