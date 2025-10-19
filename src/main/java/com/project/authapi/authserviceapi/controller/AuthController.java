@@ -106,6 +106,8 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         ResponseCookie deleteCookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(false)
                 .path("/")
                 .maxAge(0)
                 .build();
