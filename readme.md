@@ -1,25 +1,25 @@
-# Cel projektu: praktyczne opanowanie Spring Boot Security, JWT oraz architektury REST API.
+# Project goal: practical mastery of Spring Boot Security, JWT, and REST API architecture.
 
 # 🔐 Auth Service API
 
-Auth Service API to backendowa aplikacja oparta o **Spring Boot**, służąca do **uwierzytelniania i autoryzacji użytkowników** przy użyciu **JWT (JSON Web Token)**.  
-Projekt został stworzony w celu nauki i praktycznego zastosowania kluczowych mechanizmów bezpieczeństwa Springa.
+The Auth Service API is a backend application based on **Spring Boot**, used to **authenticate and authorize users** using **JWT (JSON Web Token)**.
+The project was created to teach and practically apply key Spring security mechanisms.
 
 ---
 
-## 🚀 Funkcjonalności
+## 🚀 Features
 
-✅ Rejestracja nowych użytkowników (`/api/auth/register`)  
-✅ Logowanie z generowaniem JWT (`/api/auth/login`)  
-✅ Odświeżanie tokenu (`/api/auth/refresh`)  
-✅ Wylogowanie (usunięcie ciasteczka JWT) (`/api/auth/logout`)  
-✅ Walidacja tokenów przez `JwtAuthenticationFilter`  
-✅ Obsługa tokenów zarówno w **nagłówku `Authorization`**, jak i w **ciasteczkach** (`HttpOnly cookie`)  
-✅ Bezpieczne endpointy tylko dla zalogowanych użytkowników
+✅ New user registration (`/api/auth/register`)
+✅ Login with JWT generation (`/api/auth/login`)
+✅ Token refresh (`/api/auth/refresh`)
+✅ Logout (deleting the JWT cookie) (`/api/auth/logout`)
+✅ Token validation via `JwtAuthenticationFilter`
+✅ Token support in both the **Authorization* header and cookies (`HttpOnly cookie`)
+✅ Secure endpoints only for logged-in users
 
 ---
 
-## 🧩 Technologie
+## 🧩 Technologies
 
 - **Java 21**
 - **Spring Boot 3+**
