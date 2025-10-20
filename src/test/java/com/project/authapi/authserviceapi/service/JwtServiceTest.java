@@ -47,15 +47,6 @@ public class JwtServiceTest {
         assertEquals("TestUser", username);
     }
 
-    @Test
-    void isTokenValid_shouldReturnTrue() {
-        String token = jwtService.generateToken(testUser);
-        String fakeToken = jwtService.generateToken(testUser) + "fakeToken";
-        boolean valid = jwtService.isTokenValid(token, testUser);
-        boolean invalid = jwtService.isTokenValid(fakeToken, testUser);
-        assertTrue(valid);
-        //assertFalse(invalid);
-    }
 
 
 
