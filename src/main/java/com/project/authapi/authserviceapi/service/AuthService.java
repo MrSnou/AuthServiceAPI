@@ -17,6 +17,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     public void register(RegisterRequest registerRequest) {
         User user = User.builder()
@@ -33,7 +34,8 @@ public class AuthService {
             throw new IllegalArgumentException("Username or password is empty");
         }
 
-        UserDetails userDetails = new CustomUserDetailsService(userRepository).loadUserByUsername(loginRequest.getUsername());
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getUsername());
+
 
         String username = userDetails.getUsername();
         String password = userDetails.getPassword();
@@ -44,8 +46,8 @@ public class AuthService {
             } else {
 
                 return jwtService.generateToken(userDetails);
-
             }
+
         } else {
             throw new IllegalArgumentException("User not found");
         }

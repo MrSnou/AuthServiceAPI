@@ -1,6 +1,7 @@
 package com.project.authapi.authserviceapi.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -58,13 +59,21 @@ public class JwtService implements AutoCloseable {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        try {
+            final String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 
-    private boolean isTokenExpired(String token) {
-        Date expiration = extractClaim(token, Claims::getExpiration);
-        return expiration.before(new Date());
+    public boolean isTokenExpired(String token) {
+        try {
+            Date expiration = extractClaim(token, Claims::getExpiration);
+            return expiration.before(new Date());
+        } catch (JwtException | IllegalArgumentException e) {
+            return true;
+        }
     }
 
     private Claims parseAllClaims(String token) {
