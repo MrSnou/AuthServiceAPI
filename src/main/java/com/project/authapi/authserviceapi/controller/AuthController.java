@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 // REST API
-// endpoints: /login, /register, /refresh itd.
+// endpoints: /login, /register, /refresh etc.
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @RestController
@@ -30,7 +30,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
         authService.register(registerRequest);
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }
 
     @PostMapping("/login")
@@ -53,7 +53,7 @@ public class AuthController {
     @GetMapping("/secure")
     public ResponseEntity<String> secureEndpoint(Authentication authentication) {
         String username = authentication.getName();
-        return ResponseEntity.ok("Zalogowano jako: " + username);
+        return ResponseEntity.ok("Logged in as: " + username);
     }
 
     @GetMapping("/me")
@@ -62,8 +62,10 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@CookieValue(value = "jwt", required = false) String jwtCookie,
-            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+    public ResponseEntity<?> refreshToken(
+            @CookieValue(value = "jwt", required = false) String jwtCookie,
+            @RequestHeader(value = "Authorization", required = false)
+            String authHeader) {
 
         String token = null;
 
