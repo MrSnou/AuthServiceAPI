@@ -9,10 +9,12 @@ import com.project.authapi.authserviceapi.exception.InvalidCredentialsException;
 import com.project.authapi.authserviceapi.exception.UserNotFoundException;
 import com.project.authapi.authserviceapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
     // Register and login logic.
@@ -23,12 +25,7 @@ public class AuthService {
     private final CustomUserDetailsService customUserDetailsService;
 
     public void register(RegisterRequest registerRequest) {
-        if (registerRequest.getUsername() == null || registerRequest.getPassword() == null || registerRequest.getEmail() == null ||
-        registerRequest.getPassword().isEmpty() || registerRequest.getEmail().isEmpty() || registerRequest.getPassword().isEmpty()
-        || registerRequest.getUsername().length() < 6 || registerRequest.getEmail().length() < 6 || registerRequest.getPassword().length() < 6) {
-            throw new EmptyFieldException("Username, email address or password is empty");
-        }
-
+        log.info("Registering User: {}", registerRequest.getUsername());
         User user = User.builder()
                 .username(registerRequest.getUsername())
                 .email(registerRequest.getEmail())
@@ -37,13 +34,11 @@ public class AuthService {
                 .enabled(true).build();
 
         userRepository.save(user);
+        log.info("User {} registered successfully", user.getUsername());
     }
 
     public String login(LoginRequest loginRequest) {
-        if (loginRequest.getUsername().isEmpty() || loginRequest.getPassword().isEmpty()) {
-            throw new EmptyFieldException("Username or password is empty");
-        }
-
+        log.info("Login User: {}", loginRequest.getUsername());
         UserDetails userDetails = customUserDetailsService
                 .loadUserByUsername(loginRequest.getUsername());
 
@@ -53,13 +48,16 @@ public class AuthService {
 
         if (userRepository.findByUsername(username).isPresent() || userRepository.existsByUsername(username)) {
             if (!passwordEncoder.matches(loginRequest.getPassword(),  password)) {
+                log.warn("User {} password incorrect", loginRequest.getUsername());
                 throw new InvalidCredentialsException("Password is incorrect");
             } else {
 
+                log.info("User {} logged in successfully", loginRequest.getUsername());
                 return jwtService.generateToken(userDetails);
             }
 
         } else {
+            log.info("User {} does not exist", loginRequest.getUsername());
             throw new UserNotFoundException("User not found");
         }
 

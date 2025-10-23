@@ -5,6 +5,7 @@ import com.project.authapi.authserviceapi.dto.RegisterRequest;
 import com.project.authapi.authserviceapi.service.AuthService;
 import com.project.authapi.authserviceapi.service.CustomUserDetailsService;
 import com.project.authapi.authserviceapi.service.JwtService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,13 +29,13 @@ public class AuthController {
     private final JwtService jwtService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
         authService.register(registerRequest);
         return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         String token = authService.login(loginRequest);
 
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", token)
