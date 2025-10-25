@@ -7,6 +7,7 @@ import com.project.authapi.authserviceapi.entity.User;
 import com.project.authapi.authserviceapi.exception.EmptyFieldException;
 import com.project.authapi.authserviceapi.exception.InvalidCredentialsException;
 import com.project.authapi.authserviceapi.exception.UserNotFoundException;
+import com.project.authapi.authserviceapi.mapper.UserMapper;
 import com.project.authapi.authserviceapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,43 +24,32 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final CustomUserDetailsService customUserDetailsService;
+    private final UserMapper userMapper;
 
     public void register(RegisterRequest registerRequest) {
         log.info("Registering User: {}", registerRequest.getUsername());
-        User user = User.builder()
-                .username(registerRequest.getUsername())
-                .email(registerRequest.getEmail())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(Role.USER)
-                .enabled(true).build();
+        User user = userMapper.toEntity(registerRequest);
 
         userRepository.save(user);
         log.info("User {} registered successfully", user.getUsername());
     }
 
-    public String login(LoginRequest loginRequest) {
-        log.info("Login User: {}", loginRequest.getUsername());
-        UserDetails userDetails = customUserDetailsService
-                .loadUserByUsername(loginRequest.getUsername());
+    public String login(LoginRequest request) {
+        log.info("Attempting login for user: {}", request.getUsername());
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> {
+                    log.warn("User {} not found", request.getUsername());
+                    return new UserNotFoundException("User not found");
+                });
 
-
-        String username = userDetails.getUsername();
-        String password = userDetails.getPassword();
-
-        if (userRepository.findByUsername(username).isPresent() || userRepository.existsByUsername(username)) {
-            if (!passwordEncoder.matches(loginRequest.getPassword(),  password)) {
-                log.warn("User {} password incorrect", loginRequest.getUsername());
-                throw new InvalidCredentialsException("Password is incorrect");
-            } else {
-
-                log.info("User {} logged in successfully", loginRequest.getUsername());
-                return jwtService.generateToken(userDetails);
-            }
-
-        } else {
-            log.info("User {} does not exist", loginRequest.getUsername());
-            throw new UserNotFoundException("User not found");
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            log.warn("Invalid password for user {}", request.getUsername());
+            throw new InvalidCredentialsException("Invalid credentials");
         }
+
+        log.info("User {} logged in successfully", user.getUsername());
+        return jwtService.generateToken(user);
+
 
     }
 }

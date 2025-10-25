@@ -41,7 +41,7 @@ class GlobalExceptionHandlerTest {
     void handleGeneral_shouldReturn500() throws Exception {
         mockMvc.perform(get("/unexpected"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.message").value("Unexpected error occurred"));
+                .andExpect(jsonPath("$.message").value("Unexpected not registered error occurred!"));
     }
 }
 

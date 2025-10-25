@@ -61,20 +61,15 @@ public class AuthControllerTest {
     void registerWithEmptyData_shouldReturnException() throws Exception {
         RegisterRequest request = new RegisterRequest();
         request.setUsername("");
-        request.setEmail("");
-        request.setPassword("");
-
-        doThrow(new EmptyFieldException("Username, email address or password is empty"))
-                .when(authService).register(any(RegisterRequest.class));
+        request.setEmail("some@random.mail");
+        request.setPassword("someRandomPassword");
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Username, email address or password is empty"));
-
-        verify(authService, times(1)).register(any(RegisterRequest.class));
+                .andExpect(jsonPath("$.message").value("Username cannot be empty"));
     }
 
 

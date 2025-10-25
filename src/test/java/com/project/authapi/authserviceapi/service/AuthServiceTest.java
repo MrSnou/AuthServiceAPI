@@ -3,6 +3,7 @@ package com.project.authapi.authserviceapi.service;
 import com.project.authapi.authserviceapi.dto.LoginRequest;
 import com.project.authapi.authserviceapi.entity.Role;
 import com.project.authapi.authserviceapi.entity.User;
+import com.project.authapi.authserviceapi.exception.UserNotFoundException;
 import com.project.authapi.authserviceapi.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,11 +81,11 @@ public class AuthServiceTest {
         assertTrue(jwtService.isTokenValid(testReceivedToken, user));
 
         LoginRequest empty = new LoginRequest();
-        assertThrows(NullPointerException.class, () -> authService.login(empty));
+        assertThrows(UserNotFoundException.class, () -> authService.login(empty));
 
         LoginRequest wrong = new LoginRequest();
         wrong.setUsername("WrongUsername");
         wrong.setPassword("WrongPassword");
-        assertThrows(Exception.class, () -> authService.login(wrong));
+        assertThrows(UserNotFoundException.class, () -> authService.login(wrong));
     }
 }
