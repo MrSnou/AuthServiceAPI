@@ -28,7 +28,7 @@ The project was created to teach and practically apply key Spring security mecha
 - **Spring Web**
 - **Spring Data JPA**
 - **JWT (jjwt)**
-- **H2 Database (dla testów)**
+- **H2 Database (for tests)**
 - **Maven**
 
 ---
